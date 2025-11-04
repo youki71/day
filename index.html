@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我们的纪念日 💕</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- GSAP 动画库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <!-- 引导动画页面 -->
+    <div class="guide-overlay" id="guideOverlay">
+        <!-- 浮动装饰元素 -->
+        <div class="guide-decorations">
+            <div class="guide-star" style="top: 10%; left: 10%; animation-delay: 0s;">✨</div>
+            <div class="guide-star" style="top: 20%; right: 15%; animation-delay: 1s;">💫</div>
+            <div class="guide-star" style="top: 60%; left: 8%; animation-delay: 2s;">⭐</div>
+            <div class="guide-star" style="bottom: 20%; right: 10%; animation-delay: 1.5s;">✨</div>
+            <div class="guide-star" style="top: 40%; left: 5%; animation-delay: 0.5s;">💫</div>
+            <div class="guide-star" style="top: 70%; right: 5%; animation-delay: 2.5s;">⭐</div>
+            <div class="guide-heart" style="top: 15%; left: 20%; animation-delay: 0s;">💕</div>
+            <div class="guide-heart" style="top: 30%; right: 25%; animation-delay: 1s;">💖</div>
+            <div class="guide-heart" style="bottom: 30%; left: 15%; animation-delay: 2s;">💗</div>
+            <div class="guide-heart" style="top: 50%; right: 12%; animation-delay: 1.5s;">💝</div>
+        </div>
+
+        <!-- 气球容器 -->
+        <div class="balloons-container" id="balloonsContainer"></div>
+
+        <!-- 烟花画布 - 已禁用 -->
+        <!-- <canvas id="fireworksCanvas" class="fireworks-canvas"></canvas> -->
+        <!-- 页面1：欢迎页 -->
+        <div class="guide-page active" data-page="1">
+            <div class="guide-content">
+                <div class="guide-icon animate-scale">💕</div>
+                <h1 class="guide-title fade-in-up">欢迎来到我们的爱情故事</h1>
+                <p class="guide-subtitle fade-in-up delay-1">Welcome to Our Love Story</p>
+                <div class="guide-text fade-in-up delay-2">
+                    <p>这里珍藏着我们最美好的回忆</p>
+                    <p>每一个瞬间，都值得被铭记</p>
+                </div>
+                <button class="guide-btn fade-in-up delay-3" onclick="nextGuidePage()">
+                    开始浏览 →
+                </button>
+            </div>
+            <div class="guide-progress">
+                <span class="progress-dot active"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+            </div>
+        </div>
+
+        <!-- 页面2：情话页1 -->
+        <div class="guide-page" data-page="2">
+            <div class="guide-content">
+                <div class="guide-icon animate-heart">❤️</div>
+                <h2 class="guide-quote fade-in">"</h2>
+                <p class="guide-love-text fade-in-up">
+                    遇见你的那一刻<br>
+                    我就知道<br>
+                    余生的所有惊喜<br>
+                    都是为你而准备
+                </p>
+                <h2 class="guide-quote-end fade-in">"</h2>
+                <button class="guide-btn fade-in-up delay-2" onclick="pauseAutoPlay(); nextGuidePage()">
+                    继续 →
+                </button>
+            </div>
+            <div class="guide-progress">
+                <span class="progress-dot"></span>
+                <span class="progress-dot active"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+            </div>
+        </div>
+
+        <!-- 页面3：情话页2 -->
+        <div class="guide-page" data-page="3">
+            <div class="guide-content">
+                <div class="guide-icon animate-pulse">💖</div>
+                <h2 class="guide-quote fade-in">"</h2>
+                <p class="guide-love-text fade-in-up">
+                    我想和你一起<br>
+                    看春天的花开<br>
+                    夏天的海浪<br>
+                    秋天的落叶<br>
+                    冬天的雪花<br>
+                    以及余生的每一天
+                </p>
+                <h2 class="guide-quote-end fade-in">"</h2>
+                <button class="guide-btn fade-in-up delay-2" onclick="pauseAutoPlay(); nextGuidePage()">
+                    继续 →
+                </button>
+            </div>
+            <div class="guide-progress">
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot active"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+            </div>
+        </div>
+
+        <!-- 页面4：情话页3 -->
+        <div class="guide-page" data-page="4">
+            <div class="guide-content">
+                <div class="guide-icon animate-rotate">💝</div>
+                <h2 class="guide-quote fade-in">"</h2>
+                <p class="guide-love-text fade-in-up">
+                    在茫茫人海中<br>
+                    我找到了你<br>
+                    这是我的万幸<br>
+                    也是我的宿命<br>
+                    <br>
+                    从此<br>
+                    我的世界因你而精彩
+                </p>
+                <h2 class="guide-quote-end fade-in">"</h2>
+                <button class="guide-btn fade-in-up delay-2" onclick="pauseAutoPlay(); nextGuidePage()">
+                    继续 →
+                </button>
+            </div>
+            <div class="guide-progress">
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot active"></span>
+                <span class="progress-dot"></span>
+            </div>
+        </div>
+
+        <!-- 页面5：说明页 -->
+        <div class="guide-page" data-page="5">
+            <div class="guide-content">
+                <div class="guide-icon animate-bounce">✨</div>
+                <h1 class="guide-title fade-in-up">使用说明</h1>
+                <div class="guide-instructions fade-in-up delay-1">
+                    <div class="instruction-item">
+                        <span class="instruction-icon">🏠</span>
+                        <p><strong>首页</strong>：查看我们在一起的时间倒计时</p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-icon">📖</span>
+                        <p><strong>我们的故事</strong>：时间线记录重要时刻</p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-icon">📷</span>
+                        <p><strong>记忆珍藏</strong>：浏览照片和视频回忆</p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-icon">🎮</span>
+                        <p><strong>互动专区</strong>：玩小游戏，获取爱情证书</p>
+                    </div>
+                </div>
+                <button class="guide-btn-primary fade-in-up delay-2" onclick="pauseAutoPlay(); closeGuide()">
+                    进入我们的爱情世界 💕
+                </button>
+            </div>
+            <div class="guide-progress">
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot"></span>
+                <span class="progress-dot active"></span>
+            </div>
+        </div>
+
+        <!-- 跳过按钮 -->
+        <button class="guide-skip" onclick="pauseAutoPlay(); closeGuide()">跳过 ›</button>
+        
+        <!-- 自动播放控制按钮 -->
+        <button class="autoplay-toggle" id="autoplayToggle" onclick="toggleAutoPlay()" title="暂停/继续自动播放（空格键）">
+            <span class="play-icon">⏸</span>
+        </button>
+        
+        <!-- 提示文字 - 已禁用 -->
+        <!-- <div class="click-hint">点击屏幕任意位置绽放烟花 🎆</div> -->
+    </div>
+
+    <!-- 重新查看引导按钮 -->
+    <button class="show-guide-btn" onclick="showGuideAgain()" title="重新查看引导">
+        ❓
+    </button>
+
+    <!-- 浮动装饰元素 -->
+    <div class="floating-hearts">
+        <span class="floating-heart" style="left: 10%; animation-delay: 0s;">💕</span>
+        <span class="floating-heart" style="left: 20%; animation-delay: 2s;">💖</span>
+        <span class="floating-heart" style="left: 30%; animation-delay: 4s;">💗</span>
+        <span class="floating-heart" style="left: 40%; animation-delay: 1s;">💝</span>
+        <span class="floating-heart" style="left: 50%; animation-delay: 3s;">💓</span>
+        <span class="floating-heart" style="left: 60%; animation-delay: 5s;">💕</span>
+        <span class="floating-heart" style="left: 70%; animation-delay: 2.5s;">💖</span>
+        <span class="floating-heart" style="left: 80%; animation-delay: 4.5s;">💗</span>
+        <span class="floating-heart" style="left: 90%; animation-delay: 1.5s;">💝</span>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">💕 Our Love Story</div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">首页</a></li>
+                <li><a href="#story" class="nav-link">我们的故事</a></li>
+                <li><a href="#memories" class="nav-link">记忆珍藏</a></li>
+                <li><a href="#games" class="nav-link">互动专区</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 首页 - 开场动画 + 倒计时 -->
+    <section id="home" class="section home-section">
+        <div class="opening-animation" id="openingAnimation">
+            <div class="heart-container">
+                <div class="heart"></div>
+                <div class="heart"></div>
+                <div class="heart"></div>
+            </div>
+            <h1 class="opening-text">Our Love Story</h1>
+            <p class="opening-subtitle">点击任意位置进入</p>
+        </div>
+        
+        <div class="home-content" id="homeContent">
+            <div class="countdown-container">
+                <h1 class="main-title">我们在一起的每一天</h1>
+                <div class="countdown" id="countdown">
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="years">0</span>
+                        <span class="countdown-label">年</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="days">0</span>
+                        <span class="countdown-label">天</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="hours">0</span>
+                        <span class="countdown-label">小时</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="minutes">0</span>
+                        <span class="countdown-label">分钟</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="seconds">0</span>
+                        <span class="countdown-label">秒</span>
+                    </div>
+                </div>
+                <p class="anniversary-date">自 <span id="startDate">2020年1月1日</span> 以来</p>
+                <button class="btn-primary" onclick="document.getElementById('story').scrollIntoView({behavior: 'smooth'})">
+                    探索我们的故事 →
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 我们的故事 - 时间线 -->
+    <section id="story" class="section story-section">
+        <h2 class="section-title">我们的故事 📖</h2>
+        <div class="timeline">
+            <div class="timeline-item" data-aos="fade-right">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">2020年1月1日</div>
+                    <h3>初次相遇</h3>
+                    <p>那是一个美好的开始，我们第一次相遇的那一刻，就知道你是特别的...</p>
+                </div>
+            </div>
+            <div class="timeline-item" data-aos="fade-left">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">2020年2月14日</div>
+                    <h3>第一次约会</h3>
+                    <p>情人节的第一次约会，我们一起看了电影，分享了彼此的梦想...</p>
+                </div>
+            </div>
+            <div class="timeline-item" data-aos="fade-right">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">2020年5月20日</div>
+                    <h3>确定关系</h3>
+                    <p>在那个浪漫的夜晚，我们正式在一起了。从此，生命中多了一个你...</p>
+                </div>
+            </div>
+            <div class="timeline-item" data-aos="fade-left">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">2021年12月25日</div>
+                    <h3>求婚成功</h3>
+                    <p>圣诞节的雪花飘落，我单膝跪地，你含泪答应。这是我们最美的瞬间...</p>
+                </div>
+            </div>
+            <div class="timeline-item" data-aos="fade-right">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">2022年10月1日</div>
+                    <h3>步入婚姻殿堂</h3>
+                    <p>在亲朋好友的见证下，我们携手走进婚姻的殿堂，承诺相守一生...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 记忆珍藏 - 照片墙 + 视频 -->
+    <section id="memories" class="section memories-section">
+        <h2 class="section-title">记忆珍藏 📷</h2>
+        
+        <div class="memories-tabs">
+            <button class="tab-btn active" data-tab="photos"><span>照片墙</span></button>
+            <button class="tab-btn" data-tab="videos"><span>视频回忆</span></button>
+        </div>
+
+        <div class="tab-content active" id="photos">
+            <div class="photo-gallery">
+                <div class="photo-item" data-aos="zoom-in">
+                    <div class="photo-placeholder">
+                        <span>📸</span>
+                        <p>第一次约会</p>
+                    </div>
+                </div>
+                <div class="photo-item" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="photo-placeholder">
+                        <span>📸</span>
+                        <p>旅行回忆</p>
+                    </div>
+                </div>
+                <div class="photo-item" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="photo-placeholder">
+                        <span>📸</span>
+                        <p>求婚瞬间</p>
+                    </div>
+                </div>
+                <div class="photo-item" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="photo-placeholder">
+                        <span>📸</span>
+                        <p>婚礼现场</p>
+                    </div>
+                </div>
+                <div class="photo-item" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="photo-placeholder">
+                        <span>📸</span>
+                        <p>日常时光</p>
+                    </div>
+                </div>
+                <div class="photo-item" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="photo-placeholder">
+                        <span>📸</span>
+                        <p>甜蜜合影</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="videos">
+            <div class="video-gallery">
+                <div class="video-item">
+                    <div class="video-placeholder">
+                        <span>🎬</span>
+                        <p>婚礼视频</p>
+                        <button class="play-btn">▶ 播放</button>
+                    </div>
+                </div>
+                <div class="video-item">
+                    <div class="video-placeholder">
+                        <span>🎬</span>
+                        <p>旅行Vlog</p>
+                        <button class="play-btn">▶ 播放</button>
+                    </div>
+                </div>
+                <div class="video-item">
+                    <div class="video-placeholder">
+                        <span>🎬</span>
+                        <p>日常记录</p>
+                        <button class="play-btn">▶ 播放</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 互动专区 - 小游戏 -->
+    <section id="games" class="section games-section">
+        <h2 class="section-title">互动专区 🎮</h2>
+        
+        <div class="games-container">
+            <!-- 爱情问答游戏 -->
+            <div class="game-card">
+                <div class="game-icon">❤️</div>
+                <h3>爱情问答</h3>
+                <p>测测你对TA的了解有多深</p>
+                <button class="btn-game" onclick="startQuizGame()">开始游戏</button>
+            </div>
+
+            <!-- 拼图游戏 -->
+            <div class="game-card">
+                <div class="game-icon">🧩</div>
+                <h3>爱情拼图</h3>
+                <p>拼出我们的甜蜜回忆</p>
+                <button class="btn-game" onclick="startPuzzleGame()">开始游戏</button>
+            </div>
+
+            <!-- 记忆翻牌游戏 -->
+            <div class="game-card">
+                <div class="game-icon">🎴</div>
+                <h3>记忆配对</h3>
+                <p>找出所有成对的爱心</p>
+                <button class="btn-game" onclick="startMemoryGame()">开始游戏</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 游戏弹窗 -->
+    <div class="game-modal" id="gameModal">
+        <div class="game-modal-content">
+            <span class="close-modal" onclick="closeGameModal()">&times;</span>
+            <div id="gameContent"></div>
+        </div>
+    </div>
+
+    <!-- 证书弹窗 -->
+    <div class="certificate-modal" id="certificateModal">
+        <div class="certificate-content">
+            <span class="close-modal" onclick="closeCertificate()">&times;</span>
+            <div class="certificate" id="certificate">
+                <div class="certificate-border">
+                    <div class="certificate-header">
+                        <h2>💕 爱情证书 💕</h2>
+                        <div class="certificate-ornament">✨</div>
+                    </div>
+                    <div class="certificate-body">
+                        <p class="certificate-text">恭喜你完成了挑战！</p>
+                        <p class="certificate-main">这份证书见证着你对TA深深的爱意</p>
+                        <div class="certificate-details">
+                            <p><strong>游戏名称：</strong><span id="certGameName"></span></p>
+                            <p><strong>完成时间：</strong><span id="certTime"></span></p>
+                            <p><strong>得分：</strong><span id="certScore"></span></p>
+                        </div>
+                        <div class="certificate-message">
+                            <p>"愿我们的爱情如同这证书，永恒而珍贵"</p>
+                        </div>
+                        <div class="certificate-footer">
+                            <p class="certificate-date" id="certDate"></p>
+                            <div class="certificate-signature">
+                                <span>💝</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-download" onclick="downloadCertificate()">下载证书</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

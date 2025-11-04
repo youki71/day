@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景测试页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        .test-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 60%, #ff6b9d 100%);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .test-content {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+            color: white;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .success {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .button {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .button:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .info-box strong {
+            color: #ffd700;
+        }
+
+        .test-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .test-list li {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .test-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-overlay">
+        <div class="test-content">
+            <div class="success">✨ 成功！✨</div>
+            <h1>背景显示正常</h1>
+            <p>如果你能看到这个页面，说明：</p>
+            <ul class="test-list">
+                <li>浏览器支持渐变背景</li>
+                <li>CSS动画正常工作</li>
+                <li>颜色显示正确（紫色→粉色）</li>
+            </ul>
+            
+            <div class="info-box">
+                <p><strong>当前显示：</strong></p>
+                <p>• 渐变背景：紫色 (#667eea) → 深紫 (#764ba2) → 粉紫 (#f093fb) → 粉红 (#ff6b9d)</p>
+                <p>• 动画效果：背景缓慢移动</p>
+                <p>• 毛玻璃效果：内容卡片半透明</p>
+            </div>
+
+            <a href="index.html" class="button">返回主页</a>
+        </div>
+    </div>
+
+    <script>
+        // 输出诊断信息到控制台
+        console.log('=== 背景测试诊断 ===');
+        console.log('浏览器：', navigator.userAgent);
+        console.log('视口大小：', window.innerWidth, 'x', window.innerHeight);
+        console.log('支持backdrop-filter：', CSS.supports('backdrop-filter', 'blur(10px)'));
+        console.log('支持linear-gradient：', CSS.supports('background', 'linear-gradient(red, blue)'));
+        
+        // 检查背景色
+        const overlay = document.querySelector('.test-overlay');
+        const computedStyle = window.getComputedStyle(overlay);
+        console.log('实际背景：', computedStyle.background);
+        console.log('===================');
+    </script>
+</body>
+</html>
+
