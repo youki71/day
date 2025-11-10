@@ -9,6 +9,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
+    <!-- 背景音乐 -->
+    <audio id="backgroundMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+        您的浏览器不支持音频播放。
+    </audio>
+
     <!-- 引导动画页面 -->
     <div class="guide-overlay" id="guideOverlay">
         <!-- 浮动装饰元素 -->
@@ -40,8 +46,8 @@
                     <p>这里珍藏着我们最美好的回忆</p>
                     <p>每一个瞬间，都值得被铭记</p>
                 </div>
-                <button class="guide-btn fade-in-up delay-3" onclick="nextGuidePage()">
-                    开始浏览 →
+                <button class="guide-btn guide-btn-start fade-in-up delay-3" onclick="startGuideJourney()">
+                    🎵 点击开始我们的旅程 →
                 </button>
             </div>
             <div class="guide-progress">
@@ -54,8 +60,8 @@
         </div>
 
         <!-- 页面2：情话页1 -->
-        <div class="guide-page" data-page="2">
-            <div class="guide-content">
+        <div class="guide-page guide-page-white" data-page="2">
+            <div class="guide-content guide-content-white">
                 <div class="guide-icon animate-heart">❤️</div>
                 <h2 class="guide-quote fade-in">"</h2>
                 <p class="guide-love-text fade-in-up">
@@ -79,8 +85,8 @@
         </div>
 
         <!-- 页面3：情话页2 -->
-        <div class="guide-page" data-page="3">
-            <div class="guide-content">
+        <div class="guide-page guide-page-white" data-page="3">
+            <div class="guide-content guide-content-white">
                 <div class="guide-icon animate-pulse">💖</div>
                 <h2 class="guide-quote fade-in">"</h2>
                 <p class="guide-love-text fade-in-up">
@@ -106,8 +112,8 @@
         </div>
 
         <!-- 页面4：情话页3 -->
-        <div class="guide-page" data-page="4">
-            <div class="guide-content">
+        <div class="guide-page guide-page-white" data-page="4">
+            <div class="guide-content guide-content-white">
                 <div class="guide-icon animate-rotate">💝</div>
                 <h2 class="guide-quote fade-in">"</h2>
                 <p class="guide-love-text fade-in-up">
@@ -134,8 +140,8 @@
         </div>
 
         <!-- 页面5：说明页 -->
-        <div class="guide-page" data-page="5">
-            <div class="guide-content">
+        <div class="guide-page guide-page-white" data-page="5">
+            <div class="guide-content guide-content-white">
                 <div class="guide-icon animate-bounce">✨</div>
                 <h1 class="guide-title fade-in-up">使用说明</h1>
                 <div class="guide-instructions fade-in-up delay-1">
@@ -169,9 +175,6 @@
             </div>
         </div>
 
-        <!-- 跳过按钮 -->
-        <button class="guide-skip" onclick="pauseAutoPlay(); closeGuide()">跳过 ›</button>
-        
         <!-- 自动播放控制按钮 -->
         <button class="autoplay-toggle" id="autoplayToggle" onclick="toggleAutoPlay()" title="暂停/继续自动播放（空格键）">
             <span class="play-icon">⏸</span>

@@ -328,6 +328,23 @@ html {
     z-index: 10; /* 确保在烟花和气球之上 */
 }
 
+/* 白底样式的页面 */
+.guide-page-white {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.guide-page-white::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 10% 20%, rgba(255, 107, 157, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
 .guide-page.active {
     opacity: 1;
     visibility: visible;
@@ -347,6 +364,134 @@ html {
     padding: 2rem;
     position: relative;
     z-index: 20; /* 高于page的z-index，确保内容可见 */
+}
+
+/* 白底页面的内容样式 */
+.guide-content-white {
+    color: #2d3748;
+}
+
+.guide-content-white .guide-icon {
+    font-size: 4rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.guide-content-white .guide-title {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'STKaiti', 'KaiTi', '楷体', 'SimKai', serif;
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-shadow: none;
+}
+
+.guide-content-white .guide-quote,
+.guide-content-white .guide-quote-end {
+    background: linear-gradient(135deg, #ff6b9d, #f093fb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 4rem;
+    text-shadow: none;
+}
+
+.guide-content-white .guide-love-text {
+    font-family: 'STKaiti', 'KaiTi', '楷体', 'SimKai', serif;
+    font-size: 1.8rem;
+    line-height: 2.5;
+    color: #1a202c;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    backdrop-filter: blur(10px);
+    text-shadow: none;
+    animation: fadeInUp 0.8s ease forwards, floatText 3s ease-in-out infinite;
+}
+
+@keyframes floatText {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.guide-content-white .guide-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.guide-content-white .guide-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+}
+
+/* 白底页面的说明项样式 */
+.guide-content-white .instruction-item {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+    border: 2px solid rgba(102, 126, 234, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    animation: slideInRight 0.6s ease forwards;
+    animation-delay: calc(var(--item-index) * 0.1s);
+    opacity: 0;
+}
+
+.guide-content-white .instruction-item:nth-child(1) { --item-index: 1; }
+.guide-content-white .instruction-item:nth-child(2) { --item-index: 2; }
+.guide-content-white .instruction-item:nth-child(3) { --item-index: 3; }
+.guide-content-white .instruction-item:nth-child(4) { --item-index: 4; }
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.guide-content-white .instruction-item:hover {
+    transform: translateX(10px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.12));
+}
+
+.guide-content-white .instruction-item p {
+    color: #2d3748;
+}
+
+.guide-content-white .instruction-item strong {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.guide-content-white .instruction-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* 白底页面的主要按钮 */
+.guide-content-white .guide-btn-primary {
+    background: linear-gradient(135deg, #ff6b9d, #f093fb);
+    color: white;
+    border: none;
+    box-shadow: 0 8px 24px rgba(255, 107, 157, 0.3);
+}
+
+.guide-content-white .guide-btn-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 32px rgba(255, 107, 157, 0.4);
 }
 
 /* 装饰性闪烁星星 */
@@ -742,6 +887,43 @@ html {
         0 0 30px rgba(255, 255, 255, 0.3);
 }
 
+/* 第一页的开始按钮特殊样式 */
+.guide-btn-start {
+    background: linear-gradient(135deg, #ff6b9d, #f093fb, #667eea) !important;
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite !important;
+    font-size: 1.3rem;
+    padding: 1.4rem 4rem;
+    letter-spacing: 0.15em;
+    box-shadow: 
+        0 10px 40px rgba(255, 107, 157, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+.guide-btn-start:hover {
+    background: linear-gradient(135deg, #ff6b9d, #f093fb, #667eea) !important;
+    color: white !important;
+    transform: translateY(-5px) scale(1.08);
+    box-shadow: 
+        0 15px 50px rgba(255, 107, 157, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 0 40px rgba(255, 107, 157, 0.4) !important;
+}
+
+@keyframes ripple {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(4);
+    }
+}
+
 .guide-btn-primary {
     background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #a29bfe 100%);
     background-size: 200% 200%;
@@ -856,50 +1038,6 @@ html {
     width: 40px;
     border-radius: 6px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-}
-
-/* 跳过按钮 */
-.guide-skip {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    padding: 0.9rem 2.2rem;
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    backdrop-filter: blur(15px);
-    z-index: 100; /* 确保按钮可见且可交互 */
-    letter-spacing: 1px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    position: relative;
-    overflow: hidden;
-}
-
-.guide-skip::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s ease;
-}
-
-.guide-skip:hover::before {
-    left: 100%;
-}
-
-.guide-skip:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
-    border-color: rgba(255, 255, 255, 0.6);
-    transform: translateX(8px) scale(1.05);
-    box-shadow: 0 6px 30px rgba(255, 255, 255, 0.3);
 }
 
 /* 自动播放控制按钮 */
@@ -1044,13 +1182,6 @@ html {
     
     .instruction-item strong {
         font-size: 1.1rem;
-    }
-
-    .guide-skip {
-        top: 15px;
-        right: 15px;
-        padding: 0.7rem 1.5rem;
-        font-size: 0.9rem;
     }
     
     .autoplay-toggle {

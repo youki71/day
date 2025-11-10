@@ -3,12 +3,16 @@
 const ALWAYS_SHOW_GUIDE = true; // 每次都显示引导页
 
 // 配置：自动播放设置
-const AUTO_PLAY_GUIDE = true; // 是否自动播放引导页
+const AUTO_PLAY_GUIDE = false; // 禁用自动播放，需要用户点击后才开始
 const AUTO_PLAY_INTERVAL = 5000; // 自动切换间隔（毫秒），5000 = 5秒
 
 // 配置：特效开关
 const ENABLE_FIREWORKS = false; // 禁用烟花效果
 const ENABLE_BALLOONS = true; // 保留气球效果
+
+// 配置：背景音乐
+const ENABLE_BACKGROUND_MUSIC = true; // 启用背景音乐
+const BACKGROUND_MUSIC_URL = 'music.mp3'; // 背景音乐文件路径（请替换为您的音乐文件）
 
 document.addEventListener('DOMContentLoaded', () => {
     // 检查是否已经看过引导页面
@@ -36,6 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化引导页面控制
     initGuideControls();
     
+    // 初始化背景音乐
+    initBackgroundMusic();
+    
     initOpeningAnimation();
     initCountdown();
     initNavigation();
@@ -54,8 +61,9 @@ function showGuideOverlay() {
 }
 
 // 自动播放功能
-function startAutoPlay() {
-    if (!AUTO_PLAY_GUIDE) return;
+function startAutoPlay(forceStart = false) {
+    // 如果不是强制启动，检查配置
+    if (!forceStart && !AUTO_PLAY_GUIDE) return;
     
     stopAutoPlay(); // 先停止之前的
     isAutoPlaying = true;
@@ -136,6 +144,54 @@ function updateAutoPlayButton() {
     }
 }
 
+// ==================== 背景音乐控制 ====================
+let backgroundMusic = null;
+let isMusicPlaying = false;
+
+function initBackgroundMusic() {
+    if (ENABLE_BACKGROUND_MUSIC) {
+        backgroundMusic = document.getElementById('backgroundMusic');
+        if (backgroundMusic) {
+            backgroundMusic.volume = 0.3; // 设置音量为30%
+        }
+    }
+}
+
+function playBackgroundMusic() {
+    if (backgroundMusic && ENABLE_BACKGROUND_MUSIC) {
+        backgroundMusic.play()
+            .then(() => {
+                isMusicPlaying = true;
+                console.log('✅ 背景音乐开始播放');
+            })
+            .catch(err => {
+                console.log('⚠️ 音乐播放失败（可能需要用户交互）:', err.message);
+            });
+    }
+}
+
+function stopBackgroundMusic() {
+    if (backgroundMusic && isMusicPlaying) {
+        backgroundMusic.pause();
+        isMusicPlaying = false;
+        console.log('⏸️ 背景音乐已暂停');
+    }
+}
+
+// ==================== 开始引导旅程 ====================
+function startGuideJourney() {
+    console.log('🎬 用户点击开始旅程');
+    
+    // 播放背景音乐
+    playBackgroundMusic();
+    
+    // 强制开始自动播放（绕过 AUTO_PLAY_GUIDE 配置）
+    startAutoPlay(true);
+    
+    // 切换到下一页
+    nextGuidePage();
+}
+
 function nextGuidePage() {
     if (currentGuidePage < totalGuidePages) {
         const currentPage = document.querySelector(`.guide-page[data-page="${currentGuidePage}"]`);
@@ -211,6 +267,12 @@ function closeGuide() {
     // 停止气球和烟花特效，节省资源
     stopBalloons();
     stopAutoFirework();
+    
+    // 停止背景音乐
+    stopBackgroundMusic();
+    
+    // 停止自动播放
+    stopAutoPlay();
     
     // 保存到本地存储，下次访问不再显示
     localStorage.setItem('hasSeenGuide', 'true');
