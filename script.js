@@ -625,7 +625,7 @@ function startQuizGame() {
         {
             question: '我对你说的最多的话是？',
             options: ['我爱你', '想你了', '吃饭了吗', '晚安'],
-            correct: 0
+            correct: 3
         }
     ];
     
@@ -764,11 +764,11 @@ function startMemoryGame() {
 
 // ==================== 拼图游戏 ====================
 function startPuzzleGame() {
-    let tiles = [1, 2, 3, 4, 5, 6, 7, 8, 0]; // 0 表示空格
+    const PUZZLE_IMAGE = '1.jpg'; // 可改为 1-9.jpg 中任意一张
+    let tiles = [1, 2, 3, 4, 5, 6, 7, 8, 0]; // 0 表示空格（右下角）
     let moves = 0;
     let startTime = Date.now();
-    
-    // 打乱拼图
+
     function shuffle() {
         for (let i = 0; i < 100; i++) {
             const emptyIndex = tiles.indexOf(0);
@@ -777,37 +777,45 @@ function startPuzzleGame() {
             [tiles[emptyIndex], tiles[randomMove]] = [tiles[randomMove], tiles[emptyIndex]];
         }
     }
-    
+
     function getValidMoves(emptyIndex) {
         const moves = [];
         const row = Math.floor(emptyIndex / 3);
         const col = emptyIndex % 3;
-        
+
         if (row > 0) moves.push(emptyIndex - 3); // 上
         if (row < 2) moves.push(emptyIndex + 3); // 下
         if (col > 0) moves.push(emptyIndex - 1); // 左
         if (col < 2) moves.push(emptyIndex + 1); // 右
-        
+
         return moves;
     }
-    
-    function checkWin() {
-        return tiles.every((tile, index) => tile === index || (index === 8 && tile === 0));
+
+    function getBgPosForTile(tile) {
+        const idx = tile - 1; // 0..7
+        const r = Math.floor(idx / 3);
+        const c = idx % 3;
+        const x = c === 0 ? '0%' : c === 1 ? '50%' : '100%';
+        const y = r === 0 ? '0%' : r === 1 ? '50%' : '100%';
+        return `${x} ${y}`;
     }
-    
+
+    function checkWin() {
+        return tiles.every((tile, index) => tile === index + 1 || (index === 8 && tile === 0));
+    }
+
     function renderPuzzle() {
         const gameContent = document.getElementById('gameContent');
         gameContent.innerHTML = `
             <div class="puzzle-game">
-                <h2>爱情拼图 🧩</h2>
+                <h2>照片拼图 🧩</h2>
                 <div class="puzzle-info">
                     <p>步数: <strong id="puzzleMoves">${moves}</strong></p>
-                    <p>将数字按顺序排列（1-8），空格在右下角</p>
+                    <p>点击方块与空位交换，拼出完整照片</p>
                 </div>
                 <div class="puzzle-grid">
                     ${tiles.map((tile, index) => `
-                        <div class="puzzle-piece ${tile === 0 ? 'empty' : ''}" data-index="${index}">
-                            ${tile === 0 ? '' : tile}
+                        <div class="puzzle-piece ${tile === 0 ? 'empty' : ''}" data-index="${index}" ${tile === 0 ? '' : `style="background-image: url('${PUZZLE_IMAGE}'); background-size: 300% 300%; background-position: ${getBgPosForTile(tile)}; background-repeat: no-repeat;"`}>
                         </div>
                     `).join('')}
                 </div>
@@ -816,7 +824,7 @@ function startPuzzleGame() {
                 </div>
             </div>
         `;
-        
+
         document.querySelectorAll('.puzzle-piece').forEach(piece => {
             piece.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
@@ -827,27 +835,27 @@ function startPuzzleGame() {
                     [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
                     moves++;
                     renderPuzzle();
-                    
+
                     if (checkWin()) {
                         const endTime = Date.now();
                         const timeTaken = Math.floor((endTime - startTime) / 1000);
                         setTimeout(() => {
-                            showCertificate('爱情拼图', moves, `${moves}步`, timeTaken);
+                            showCertificate('照片拼图', moves, `${moves}步`, timeTaken);
                             closeGameModal();
-                        }, 500);
+                        }, 300);
                     }
                 }
             });
         });
     }
-    
+
     window.shufflePuzzle = function() {
         moves = 0;
         startTime = Date.now();
         shuffle();
         renderPuzzle();
     };
-    
+
     shuffle();
     document.getElementById('gameModal').classList.add('active');
     renderPuzzle();
