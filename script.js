@@ -64,37 +64,16 @@ function showGuideOverlay() {
 function startAutoPlay(forceStart = false) {
     // 如果不是强制启动，检查配置
     if (!forceStart && !AUTO_PLAY_GUIDE) return;
-    
     stopAutoPlay(); // 先停止之前的
     isAutoPlaying = true;
     updateAutoPlayButton(); // 更新按钮状态
-    
-    autoPlayTimer = setInterval(() => {
-        const guideOverlay = document.getElementById('guideOverlay');
-        
-        // 如果引导页已关闭，停止自动播放
-        if (guideOverlay.classList.contains('hidden')) {
-            stopAutoPlay();
-            return;
-        }
-        
-        // 如果是最后一页，自动关闭引导
-        if (currentGuidePage >= totalGuidePages) {
-            stopAutoPlay();
-            setTimeout(() => {
-                closeGuide();
-            }, AUTO_PLAY_INTERVAL);
-            return;
-        }
-        
-        // 切换到下一页
-        nextGuidePage();
-    }, AUTO_PLAY_INTERVAL);
+    // 基于当前页的逐字动画总时长进行动态调度
+    scheduleAutoNext();
 }
 
 function stopAutoPlay() {
     if (autoPlayTimer) {
-        clearInterval(autoPlayTimer);
+        clearTimeout(autoPlayTimer);
         autoPlayTimer = null;
     }
     isAutoPlaying = false;
@@ -196,16 +175,17 @@ function nextGuidePage() {
     if (currentGuidePage < totalGuidePages) {
         const currentPage = document.querySelector(`.guide-page[data-page="${currentGuidePage}"]`);
         const nextPage = document.querySelector(`.guide-page[data-page="${currentGuidePage + 1}"]`);
-        
-        // 添加离开动画
-        currentPage.classList.add('leaving');
-        
-        setTimeout(() => {
-            currentPage.classList.remove('active', 'leaving');
-            nextPage.classList.add('active');
-            currentGuidePage++;
-            updateProgressDots();
-        }, 300);
+        // 直接切换页面（移除过场动画）
+        currentPage.classList.remove('active', 'leaving');
+        nextPage.classList.add('active');
+        // 激活后初始化并启动逐字打字动画
+        initTypingForPage(nextPage);
+        currentGuidePage++;
+        updateProgressDots();
+        // 如果自动播放正在进行，按新页面内容重新调度下一次切换
+        if (isAutoPlaying) {
+            scheduleAutoNext();
+        }
     } else {
         // 已经是最后一页，自动关闭
         if (isAutoPlaying) {
@@ -221,15 +201,13 @@ function previousGuidePage() {
     if (currentGuidePage > 1) {
         const currentPage = document.querySelector(`.guide-page[data-page="${currentGuidePage}"]`);
         const prevPage = document.querySelector(`.guide-page[data-page="${currentGuidePage - 1}"]`);
-        
-        currentPage.classList.add('leaving');
-        
-        setTimeout(() => {
-            currentPage.classList.remove('active', 'leaving');
-            prevPage.classList.add('active');
-            currentGuidePage--;
-            updateProgressDots();
-        }, 300);
+        // 直接切换页面（移除过场动画）
+        currentPage.classList.remove('active', 'leaving');
+        prevPage.classList.add('active');
+        // 激活后初始化并启动逐字打字动画
+        initTypingForPage(prevPage);
+        currentGuidePage--;
+        updateProgressDots();
     }
 }
 
@@ -237,16 +215,46 @@ function goToGuidePage(pageNum) {
     if (pageNum >= 1 && pageNum <= totalGuidePages && pageNum !== currentGuidePage) {
         const currentPage = document.querySelector(`.guide-page[data-page="${currentGuidePage}"]`);
         const targetPage = document.querySelector(`.guide-page[data-page="${pageNum}"]`);
-        
-        currentPage.classList.add('leaving');
-        
-        setTimeout(() => {
-            currentPage.classList.remove('active', 'leaving');
-            targetPage.classList.add('active');
-            currentGuidePage = pageNum;
-            updateProgressDots();
-        }, 300);
+        // 直接切换页面（移除过场动画）
+        currentPage.classList.remove('active', 'leaving');
+        targetPage.classList.add('active');
+        // 激活后初始化并启动逐字打字动画
+        initTypingForPage(targetPage);
+        currentGuidePage = pageNum;
+        updateProgressDots();
+        if (isAutoPlaying) {
+            scheduleAutoNext();
+        }
     }
+}
+
+// 将 love-typewriter 行拆分为逐字 span，并在激活页启动动画
+function initTypingForPage(pageEl) {
+    if (!pageEl) return;
+    const lines = pageEl.querySelectorAll('.love-typewriter');
+    if (!lines.length) return;
+
+    lines.forEach(line => {
+        if (line.dataset.prepared === 'true') return;
+        const text = line.textContent || '';
+        const frag = document.createDocumentFragment();
+        // 清空原文本，按字符拆分
+        line.textContent = '';
+        [...text].forEach((ch, idx) => {
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.textContent = ch;
+            span.style.setProperty('--char-index', idx);
+            frag.appendChild(span);
+        });
+        line.appendChild(frag);
+        line.dataset.prepared = 'true';
+    });
+
+    // 下一帧打上 typing 类，触发逐字动画（保留每行延迟）
+    requestAnimationFrame(() => {
+        lines.forEach(line => line.classList.add('typing'));
+    });
 }
 
 function updateProgressDots() {
@@ -1019,5 +1027,65 @@ function startAutoFirework() {
     }
     
     autoFireworkTimeout = setTimeout(autoFirework, 1000);
+}
+// 解析 CSS 时长字符串为毫秒
+function parseCssDurationToMs(value) {
+    if (!value) return 0;
+    const v = value.toString().trim();
+    if (v.endsWith('ms')) return parseFloat(v);
+    if (v.endsWith('s')) return parseFloat(v) * 1000;
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : 0;
+}
+
+// 计算当前页逐字动画的总时长（最长一行的最后一个字符结束时间）
+function getPageTypingTotalMs(pageEl) {
+    if (!pageEl) return AUTO_PLAY_INTERVAL;
+    const lines = pageEl.querySelectorAll('.love-typewriter');
+    if (!lines.length) return AUTO_PLAY_INTERVAL; // 无情话行，使用固定间隔
+
+    const rootStyles = getComputedStyle(document.documentElement);
+    const charSpeed = parseCssDurationToMs(rootStyles.getPropertyValue('--char-speed')) || 50; // 默认 50ms/字
+    const charAnimDuration = 300; // charReveal 动画时长（与 CSS 保持一致 0.3s）
+
+    let maxMs = 0;
+    lines.forEach(line => {
+        const style = getComputedStyle(line);
+        const lineDelay = parseCssDurationToMs(style.getPropertyValue('--line-delay')) || 0;
+        const charCount = line.querySelectorAll('.char').length || (line.textContent ? line.textContent.length : 0);
+        const lastCharIndex = Math.max(charCount - 1, 0);
+        const total = lineDelay + lastCharIndex * charSpeed + charAnimDuration;
+        if (total > maxMs) maxMs = total;
+    });
+
+    // 少量冗余时间，避免边界误差
+    return maxMs + 200;
+}
+
+// 动态调度下一次自动切页：等待当前页的逐字动画完成
+function scheduleAutoNext() {
+    if (!isAutoPlaying) return;
+    const guideOverlay = document.getElementById('guideOverlay');
+    if (guideOverlay && guideOverlay.classList.contains('hidden')) {
+        stopAutoPlay();
+        return;
+    }
+    if (autoPlayTimer) {
+        clearTimeout(autoPlayTimer);
+        autoPlayTimer = null;
+    }
+
+    const currentPage = document.querySelector(`.guide-page[data-page="${currentGuidePage}"]`);
+    const waitMs = getPageTypingTotalMs(currentPage);
+    autoPlayTimer = setTimeout(() => {
+        if (currentGuidePage >= totalGuidePages) {
+            stopAutoPlay();
+            setTimeout(() => {
+                closeGuide();
+            }, AUTO_PLAY_INTERVAL);
+            return;
+        }
+        nextGuidePage();
+    }, waitMs);
 }
 
