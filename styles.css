@@ -1229,6 +1229,35 @@ html {
     content: '⏸';
 }
 
+/* 跳过引导按钮（右上角） */
+.skip-guide-btn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.skip-guide-btn:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(255, 255, 255, 0.3);
+}
+
+.skip-guide-btn:active {
+    transform: scale(0.98);
+}
 /* 淡入动画 */
 .fade-in {
     animation: fadeIn 1s ease forwards;
@@ -2839,4 +2868,10 @@ html {
     background: var(--primary-color);
     color: white;
 }
+    .skip-guide-btn {
+        top: 20px;
+        right: 20px;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.9rem;
+    }
 
