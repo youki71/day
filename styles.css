@@ -454,8 +454,9 @@ html {
 }
 
 .love-typewriter {
-    overflow: hidden;
-    white-space: nowrap;
+    overflow: visible;
+    white-space: normal;
+    word-break: break-word;
     clip-path: none;
     will-change: auto;
     /* 行级不做剪裁动画，改为逐字动画 */
@@ -472,7 +473,14 @@ html {
 :root {
     --ty-duration: 1.8s;
     --ty-steps: 26;
-    --char-speed: 0.1s;
+    --char-speed: 0.12s; /* 全局略慢，首页也更从容 */
+    --page-pause: 8s;    /* 默认每页完成后停顿时间 */
+}
+
+/* 情话页页面级速度与停顿：整体更慢、更从容 */
+.guide-page-white {
+    --char-speed: 0.2s;   /* 每个字更慢出现 */
+    --page-pause: 8s;      /* 完成后页面停顿更长 */
 }
 
 /* 仅在当前页激活时触发打字动画与光标闪烁 */
@@ -530,6 +538,11 @@ html {
         --ty-duration: 1.5s;
         --ty-steps: 18;
         --char-speed: 0.08s;
+    }
+    /* 移动端也保持更慢的节奏 */
+    .guide-page-white {
+        --char-speed: 0.12s;
+        --page-pause: 1.2s;
     }
     .guide-content-white .guide-love-text {
         font-size: 1.4rem;

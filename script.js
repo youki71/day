@@ -52,12 +52,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ==================== 引导页面控制 ====================
 let currentGuidePage = 1;
-const totalGuidePages = 5;
+const totalGuidePages = 7;
 let autoPlayTimer = null;
 let isAutoPlaying = false;
 
 function showGuideOverlay() {
     document.getElementById('guideOverlay').classList.remove('hidden');
+    // 预处理所有引导页的逐字结构，确保后续页正常逐字出现
+    prepareTypingForAllPages();
+    // 确保初始激活页立即进入逐字动画
+    const initialActive = document.querySelector('.guide-page.active');
+    initTypingForPage(initialActive);
 }
 
 // 自动播放功能
@@ -150,8 +155,9 @@ function playBackgroundMusic() {
 }
 
 function stopBackgroundMusic() {
-    if (backgroundMusic && isMusicPlaying) {
+    if (backgroundMusic) {
         backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
         isMusicPlaying = false;
         console.log('⏸️ 背景音乐已暂停');
     }
@@ -252,8 +258,116 @@ function initTypingForPage(pageEl) {
     });
 
     // 下一帧打上 typing 类，触发逐字动画（保留每行延迟）
+    // 页面级顺序：根据整页字符总量为每行设置顺序延迟
+    applyPageSequentialDelays(pageEl);
     requestAnimationFrame(() => {
         lines.forEach(line => line.classList.add('typing'));
+    });
+}
+
+// 智能分行：将过长的 love-typewriter 行按标点优先和长度阈值拆分
+function splitTextSmart(text, maxChars) {
+    const parts = [];
+    let buf = '';
+    const punctuationRegex = /[，。！？、；：,…,.!?]/;
+    for (const ch of text.trim()) {
+        buf += ch;
+        const atPunc = punctuationRegex.test(ch);
+        if ((atPunc && buf.length >= Math.floor(maxChars * 0.6)) || buf.length >= maxChars) {
+            parts.push(buf.trim());
+            buf = '';
+        }
+    }
+    if (buf.trim()) parts.push(buf.trim());
+    return parts.length ? parts : [text.trim()];
+}
+
+// 针对每页的 love-lines 容器进行分行重排
+function reflowLoveLinesForPage(pageEl) {
+    try {
+        if (!pageEl || pageEl.dataset.reflowed === 'true') return;
+        const containers = Array.from(pageEl.querySelectorAll('.love-lines'));
+        if (!containers.length) return;
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+        const MAX_CHARS = isMobile ? 12 : 16;
+
+        containers.forEach(container => {
+            const oldLines = Array.from(container.querySelectorAll('.love-typewriter'));
+            if (!oldLines.length) return;
+            // 如果不存在超长行则不改动该容器
+            const needs = oldLines.some(l => ((l.textContent || '').trim().length > MAX_CHARS));
+            if (!needs) return;
+
+            const newTexts = [];
+            oldLines.forEach(line => {
+                const txt = (line.textContent || '').trim();
+                if (!txt) return;
+                const segments = splitTextSmart(txt, MAX_CHARS);
+                segments.forEach(seg => newTexts.push(seg));
+            });
+
+      // 构建新的行（不在此处设置行延时，由页面级函数统一计算）
+      const frag = document.createDocumentFragment();
+      newTexts.forEach((seg, idx) => {
+        const p = document.createElement('p');
+        p.className = 'love-line love-typewriter';
+        p.textContent = seg;
+        frag.appendChild(p);
+      });
+
+            container.innerHTML = '';
+            container.appendChild(frag);
+        });
+
+        pageEl.dataset.reflowed = 'true';
+    } catch (err) {
+        console.warn('reflowLoveLinesForPage error:', err);
+  }
+}
+
+// 页面级顺序延迟：将整页视为一个整体，从第一行第一个字开始到最后一个字结束
+function applyPageSequentialDelays(pageEl) {
+    if (!pageEl) return;
+    const lines = Array.from(pageEl.querySelectorAll('.love-typewriter'));
+    let prevChars = 0;
+    lines.forEach(line => {
+        const charCount = line.querySelectorAll('.char').length || ((line.textContent || '').length);
+        // 每行的首字延迟 = 前面所有字符数量 * 每字符速度
+        line.style.setProperty('--line-delay', `calc(${prevChars} * var(--char-speed))`);
+        prevChars += charCount;
+    });
+}
+
+// 预处理：为所有引导页的 love-typewriter 文本拆分字符，避免后续页未初始化
+function prepareTypingForAllPages() {
+    const pages = document.querySelectorAll('.guide-page');
+    pages.forEach(page => {
+        // 先对超长行进行智能分行，避免单行过长导致显示异常
+        reflowLoveLinesForPage(page);
+        const lines = page.querySelectorAll('.love-typewriter');
+        lines.forEach(line => {
+            if (line.dataset.prepared === 'true') return;
+            const text = line.textContent || '';
+            const frag = document.createDocumentFragment();
+            line.textContent = '';
+            [...text].forEach((ch, idx) => {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = ch;
+                span.style.setProperty('--char-index', idx);
+                frag.appendChild(span);
+            });
+            line.appendChild(frag);
+            line.dataset.prepared = 'true';
+        });
+        // 按页计算整页的顺序延迟，让整页作为一个整体逐字出现
+        applyPageSequentialDelays(page);
+        // 仅当该页为激活页时添加 typing 以触发动画；其他页在切换时由 initTypingForPage 添加
+        if (page.classList.contains('active')) {
+            requestAnimationFrame(() => {
+                page.querySelectorAll('.love-typewriter').forEach(line => line.classList.add('typing'));
+            });
+        }
     });
 }
 
@@ -304,6 +418,9 @@ function showGuideAgain() {
     // 显示引导页面
     const guideOverlay = document.getElementById('guideOverlay');
     guideOverlay.classList.remove('hidden');
+    // 预处理并立即为当前激活页启动逐字动画
+    prepareTypingForAllPages();
+    initTypingForPage(document.querySelector('.guide-page.active'));
     
     // 根据配置重新启动特效
     if (ENABLE_BALLOONS) {
@@ -1045,7 +1162,7 @@ function getPageTypingTotalMs(pageEl) {
     if (!lines.length) return AUTO_PLAY_INTERVAL; // 无情话行，使用固定间隔
 
     const rootStyles = getComputedStyle(document.documentElement);
-    const charSpeed = parseCssDurationToMs(rootStyles.getPropertyValue('--char-speed')) || 50; // 默认 50ms/字
+    const pageStyles = getComputedStyle(pageEl);
     const charAnimDuration = 300; // charReveal 动画时长（与 CSS 保持一致 0.3s）
 
     let maxMs = 0;
@@ -1054,12 +1171,21 @@ function getPageTypingTotalMs(pageEl) {
         const lineDelay = parseCssDurationToMs(style.getPropertyValue('--line-delay')) || 0;
         const charCount = line.querySelectorAll('.char').length || (line.textContent ? line.textContent.length : 0);
         const lastCharIndex = Math.max(charCount - 1, 0);
+
+        // 优先读取行或页面上的 --char-speed，其次回退到 :root
+        const charSpeedVal = style.getPropertyValue('--char-speed')
+            || pageStyles.getPropertyValue('--char-speed')
+            || rootStyles.getPropertyValue('--char-speed');
+        const charSpeed = parseCssDurationToMs(charSpeedVal) || 50; // 默认 50ms/字
+
         const total = lineDelay + lastCharIndex * charSpeed + charAnimDuration;
         if (total > maxMs) maxMs = total;
     });
 
-    // 少量冗余时间，避免边界误差
-    return maxMs + 200;
+    // 页面级停顿：让每一页在完成后稍作停留（优先页面变量，其次根级变量）
+    const pagePauseVal = pageStyles.getPropertyValue('--page-pause') || rootStyles.getPropertyValue('--page-pause');
+    const pagePauseMs = parseCssDurationToMs(pagePauseVal) || 2000; // 默认 2s 停顿
+    return maxMs + pagePauseMs;
 }
 
 // 动态调度下一次自动切页：等待当前页的逐字动画完成
