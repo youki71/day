@@ -603,24 +603,24 @@ function closeGameModal() {
 function startQuizGame() {
     const questions = [
         {
-            question: '我们第一次约会去了哪里？',
-            options: ['电影院', '公园', '餐厅', '游乐园'],
+            question: '我们第一次见面你穿的什么颜色的裙子？',
+            options: ['白色', '黄色', '红色'],
             correct: 0
         },
         {
             question: '我最喜欢的颜色是什么？',
-            options: ['红色', '蓝色', '粉色', '紫色'],
+            options: ['红色', '蓝色', '绿色'],
             correct: 2
         },
         {
-            question: '我们是在哪个季节确定关系的？',
-            options: ['春天', '夏天', '秋天', '冬天'],
-            correct: 1
+            question: '我最喜欢干的事情是什么',
+            options: ['睡觉', '打游戏', '运动'],
+            correct: 2
         },
         {
-            question: '我们最喜欢一起做的事情是？',
-            options: ['看电影', '旅行', '做饭', '散步'],
-            correct: 1
+            question: '我们以前约会干的最多的事情是什么？',
+            options: ['看电影', '旅行', '做饭',],
+            correct: 0
         },
         {
             question: '我对你说的最多的话是？',
